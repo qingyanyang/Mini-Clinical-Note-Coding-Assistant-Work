@@ -3,8 +3,9 @@ import express from 'express';
 import helmet from 'helmet';
 
 import formatResponseMiddleware from './middleware/formatResponse.middleware.js';
-import unknownErrorMiddleware from './middleware/error/unknownError.middleware.js';
+import validationErrorMiddleware from './middleware/error/validationError.middleware.js';
 import pathNotFoundMiddleware from './middleware/pathNotFound.middleware.js';
+import unknownErrorMiddleware from './middleware/error/unknownError.middleware.js';
 
 import v1Router from './routes/index.js';
 import db from './utils/db.js';
@@ -15,10 +16,11 @@ const app = express();
 
 app.use(helmet());
 app.use(express.json());
-app.use(formatResponseMiddleware);
 
+app.use(formatResponseMiddleware);
 app.use('/api/v1', v1Router);
 app.use(pathNotFoundMiddleware);
+app.use(validationErrorMiddleware);
 app.use(unknownErrorMiddleware);
 
 app.listen(config.PORT, () => {

@@ -2,19 +2,17 @@ import Database from 'better-sqlite3';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
-import 'dotenv/config';
+import optionalConfigs from '../config/app.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const DB_PATH = process.env.SQLITE_DB_PATH
-    ? resolve(process.cwd(), process.env.SQLITE_DB_PATH)
-    : resolve(__dirname, '../data/database.db');
+const DB_PATH = resolve(__dirname, '../data/database.db')
 
 fs.mkdirSync(dirname(DB_PATH), { recursive: true });
 fs.accessSync(dirname(DB_PATH), fs.constants.W_OK);
 
 const options = {
-    verbose: process.env.NODE_ENV === 'dev' ? console.log : null,
+    verbose: optionalConfigs.NODE_ENV === 'dev' ? console.log : null,
     readonly: false,
     fileMustExist: false,
 };
