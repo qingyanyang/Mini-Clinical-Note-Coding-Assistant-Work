@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-export const MODEL = process.env.OPENAI_MODEL ?? "gpt-3.5-turbo";
+export const MODEL = process.env.OPENAI_MODEL ?? "gpt-4o-2024-08-06";
 export const USER_ROLE = process.env.OPENAI_USER_ROLE ?? "user";
 export const ASSISTANT_ROLE = process.env.OPENAI_ASSISTANT_ROLE ?? "system";
 
