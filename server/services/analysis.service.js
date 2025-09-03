@@ -3,7 +3,7 @@ import { runAnalysisLLM } from "./LLMClient.service.js";
 
 export const generateAnalysis = async ({ transcriptText, ack }) => {
 
-    const AnalysisRes = await runAnalysisLLM(transcriptText);
+    const analysisRes = await runAnalysisLLM(transcriptText);
 
-    return { serviceRes: AnalysisRes };
+    return { ...analysisRes };
 }

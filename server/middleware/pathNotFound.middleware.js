@@ -1,4 +1,3 @@
-export default (req, res, next) => {
+export default (req, res) => {
     res.formatResponse(`Path ${req.originalUrl} not found`, 404);
-    next();
 }
