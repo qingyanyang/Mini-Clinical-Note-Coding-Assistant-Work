@@ -1,0 +1,26 @@
+import config from "./config/app.js";
+import express from 'express';
+import helmet from 'helmet';
+
+import formatResponseMiddleware from './middleware/formatResponse.middleware.js';
+import unknownErrorMiddleware from './middleware/error/unknownError.middleware.js';
+import pathNotFoundMiddleware from './middleware/pathNotFound.middleware.js';
+
+import v1Router from './routes/index.js';
+import db from './utils/db.js';
+
+db.pragma('journal_mode = WAL');
+
+const app = express();
+
+app.use(helmet());
+app.use(express.json());
+app.use(formatResponseMiddleware);
+
+app.use('/api/v1', v1Router);
+app.use(pathNotFoundMiddleware);
+app.use(unknownErrorMiddleware);
+
+app.listen(config.PORT, () => {
+    console.info(`Server listening on port ${config.PORT}`)
+})
