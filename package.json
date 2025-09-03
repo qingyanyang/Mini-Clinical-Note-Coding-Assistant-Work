@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "description": "coding test for an AI company",
   "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "server",
+    "frontend"
+  ],
   "scripts": {
-    "dev": "concurrently -k -n server,web -c auto \"npm:dev:server\" \"npm:dev:web\"",
-    "dev:server": "npm run dev -w server",
-    "dev:web": "npm run dev -w web",
+    "dev": "concurrently -k -n server,frontend -c auto \"npm run dev -w server\" \"npm run dev -w frontend\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
