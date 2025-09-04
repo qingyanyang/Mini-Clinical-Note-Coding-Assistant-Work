@@ -49,8 +49,7 @@ const ResultsTabs: React.FC<IResultsTabs> = ({ analysisResults }) => {
         </div>
         <Button
           onClick={exportResults}
-          className="bg-emerald-600 hover:bg-emerald-700"
-          cursor-pointer
+          className="cursor-pointer bg-emerald-600 hover:bg-emerald-700"
         >
           <Download className="w-4 h-4 mr-2" />
           Export JSON
@@ -170,7 +169,7 @@ const ResultsTabs: React.FC<IResultsTabs> = ({ analysisResults }) => {
                     <div>
                       <p className="font-medium text-gray-900">{item.name}</p>
                       <p className="text-sm text-gray-600">
-                        ICD-10: {item.rationale}
+                        {icd10.join(", ")}: {item.rationale}
                       </p>
                     </div>
                   </div>
@@ -218,7 +217,7 @@ const ResultsTabs: React.FC<IResultsTabs> = ({ analysisResults }) => {
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {cpt?.map((code: ICPT, index: number) => (
-                    <>
+                    <div key={`${index}-${code.code}`}>
                       <span
                         key={index}
                         className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-mono"
@@ -227,7 +226,7 @@ const ResultsTabs: React.FC<IResultsTabs> = ({ analysisResults }) => {
                       </span>
                       <span>{code.confidence}</span>
                       <span>{code.justification}</span>
-                    </>
+                    </div>
                   ))}
                 </div>
               </div>

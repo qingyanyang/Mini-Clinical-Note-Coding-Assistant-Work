@@ -1,8 +1,22 @@
 import { z } from "zod";
 
+export const FormatRawRequestSchema = z.object({
+    rawTranscriptText: z.string().min(1, 'Transcript is required').max(10000),
+});
+
 export const AnalyzeRequestSchema = z.object({
     transcriptText: z.string().min(1, 'Transcript is required').max(10000),
     ack: z.boolean().optional()
+});
+
+export const TranscriptTurn = z.object({
+    speaker: z.enum(["clinician", "patient", "unknown"]),
+    text: z.string(),
+});
+
+export const TranscriptFormatSchema = z.object({
+    formatted: z.string(),
+    turns: z.array(TranscriptTurn).max(50),
 });
 
 export const Confidence = z.enum(["low", "med", "high"]);

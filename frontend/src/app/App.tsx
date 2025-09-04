@@ -1,90 +1,79 @@
-import { useState } from "react";
-
+// App.tsx
+import { useEffect, useState } from "react";
 import Banner from "../components/Banner";
 import HeaderAnimation from "../components/HeaderAnimation";
 import Textarea from "../components/TextArea";
 import ResultsTabs from "../components/ResultsTabs";
 import EmergencyPopup from "../components/EmergencyPopup";
-import type {
-  IAnalyzeRequest,
-  IApiFullResponse,
-  IParsedResponse,
-} from "@/types";
-import "./index.css";
 import { getErrorMessage } from "@/utils/getErrorMessage";
-import { API_BASE_URL, MAX_LENGTH } from "@/constants";
+import { MAX_LENGTH } from "@/constants";
+import { useAnalyze } from "@/hooks/useAnalyze";
+import "./index.css";
+import { useFormatTranscript } from "@/hooks/useFormatTranscript";
 
 function App() {
-  const [input, setInput] = useState<string>("");
-  const [analysisRes, setAnalysisRes] = useState<IParsedResponse | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [ackChecked, setAckChecked] = useState<boolean>(false);
-  const [showEmergencyPopup, setShowEmergencyPopup] = useState<boolean>(false);
 
-  const onInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    resetAll();
-    const newValue = e.target.value;
-    setInput(newValue);
-    //validation real time
-    const instantErrorMsg = getErrorMessage(newValue, {
-      required: true,
-      limit: MAX_LENGTH,
-    });
-    setErrorMsg(instantErrorMsg);
-  };
+  const {
+    handleSubmit,
+    requiredAck,
+    loading: isSubmitLoading,
+    error: submitError,
+    data: analysisRes,
+    reset,
+  } = useAnalyze();
+
+  const {
+    formatTranscript,
+    loading: isFormatLoading,
+    error: formatError,
+    formatted,
+  } = useFormatTranscript();
 
   const resetAll = () => {
     setAckChecked(false);
-    setShowEmergencyPopup(false);
-    setAnalysisRes(null);
+    reset();
   };
 
-  const onSubmit = async () => {
-    setIsLoading(true);
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/v1/analysis`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          transcriptText: input,
-          ack: ackChecked,
-        } as IAnalyzeRequest),
+  useEffect(() => {
+    if (formatted.trim() !== "") {
+      resetAll();
+      const instantErrorMsg = getErrorMessage(formatted, {
+        label: "transcript",
+        required: true,
+        limit: MAX_LENGTH,
       });
-      const resJson = (await res.json()) as IApiFullResponse;
-      const { parsedResponse } = resJson.data;
+      setErrorMsg(instantErrorMsg);
+    }
+  }, [formatted]);
 
-      if (resJson.status === 200) {
-        if (parsedResponse.guardrails.requiresAcknowledgement) {
-          setShowEmergencyPopup(true);
-        }
-      } else if (resJson.status === 201) {
-        setAnalysisRes(parsedResponse);
-      }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      setErrorMsg(err?.message ?? "");
-    } finally {
-      setIsLoading(false);
+  const onPaste = async () => {
+    const text = await navigator.clipboard.readText();
+    if (text.trim()) {
+      await formatTranscript({ rawTranscriptText: text });
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 flex flex-col items-center">
-      <div className="max-w-6xl flex flex-col p-6 gap-10">
+    <div className=" min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 flex flex-col items-center">
+      <div className="w-full max-w-6xl flex flex-col p-6 gap-10">
         <Banner />
         <HeaderAnimation />
         <Textarea
-          isLoading={isLoading}
-          onChange={onInputChange}
-          onSave={onSubmit}
-          name={"transcription"}
-          input={input}
-          value={input}
-          errorMsg={errorMsg}
-          disableSubmit={showEmergencyPopup && !ackChecked}
+          disabled
+          isSubmitLoading={isSubmitLoading}
+          isFormatLoading={isFormatLoading}
+          onSave={() =>
+            handleSubmit({ transcriptText: formatted, ack: ackChecked })
+          }
+          onPaste={onPaste}
+          name={"transcript"}
+          errorMsg={errorMsg || submitError || formatError}
+          disableSubmit={requiredAck && !ackChecked}
+          formatted={formatted}
         />
-        {showEmergencyPopup && <EmergencyPopup setAckChecked={setAckChecked} />}
+        {requiredAck && <EmergencyPopup setAckChecked={setAckChecked} />}
         {analysisRes && <ResultsTabs analysisResults={analysisRes} />}
       </div>
     </div>

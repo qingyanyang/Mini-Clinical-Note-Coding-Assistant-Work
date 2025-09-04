@@ -1,32 +1,37 @@
+// TextArea.tsx
 import { MAX_LENGTH } from "@/constants";
 import clsx from "clsx";
-import { ArrowUp, FileWarning, Loader2, Sparkles } from "lucide-react";
-import type { TextareaHTMLAttributes } from "react";
+import { FileWarning, Loader2, Sparkles } from "lucide-react";
+import { type TextareaHTMLAttributes } from "react";
+import AppButton from "./AppButton";
 
 interface ITextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
-  isLoading: boolean;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  onSave: () => void;
+  isSubmitLoading: boolean;
+  isFormatLoading: boolean;
+  onSave: () => Promise<void>;
+  onPaste: () => Promise<void>;
   name: string;
-  input: string;
   placeholder?: string;
   errorMsg?: string;
   maxLength?: number;
   disableSubmit: boolean;
+  formatted: string;
 }
+
 const TextArea: React.FC<ITextAreaProps> = ({
-  isLoading,
-  onChange,
+  isSubmitLoading,
+  isFormatLoading,
   onSave,
+  onPaste,
   name,
-  input,
-  placeholder = "Ask AI a medical question or make a request...",
+  placeholder = "Paste transcript, then Analyze…",
   errorMsg,
   maxLength = MAX_LENGTH,
   disableSubmit = false,
+  formatted,
   ...props
 }) => {
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (
       e.key === "Enter" &&
       !e.shiftKey &&
@@ -35,12 +40,22 @@ const TextArea: React.FC<ITextAreaProps> = ({
       !e.metaKey
     ) {
       e.preventDefault();
-      onSave();
+      await onSave();
     }
   };
+
   const disableBtn = errorMsg?.trim() !== "" || disableSubmit;
+  const isLoading = isSubmitLoading || isFormatLoading;
+
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 w-full ">
+      <AppButton
+        onClick={onPaste}
+        isLoading={isFormatLoading}
+        errorDisable={disableBtn}
+        buttonText="Paste Here"
+        className={"w-40 h-14 rounded-2xl m-auto mb-2"}
+      />
       <div
         className={clsx(
           "relative transition-all duration-500 shadow-lg rounded-lg border border-border",
@@ -60,34 +75,21 @@ const TextArea: React.FC<ITextAreaProps> = ({
         <textarea
           autoFocus
           name={name}
-          value={input}
-          onChange={onChange}
+          value={formatted}
           placeholder={placeholder}
           disabled={isLoading}
           className="p-10 rounded-4xl focus:outline-0 bg-white w-full h-[260px] resize-none text-lg placeholder:text-gray-500 focus:ring-0 z-10"
-          {...props}
           maxLength={maxLength}
           onKeyDown={handleKeyDown}
+          {...props}
         />
-        <button
-          onClick={onSave}
-          disabled={disableBtn || isLoading}
-          className={clsx(
-            isLoading
-              ? "bg-emerald-500 animate-pulse shadow-lg shadow-emerald-200"
-              : disableBtn
-              ? "bg-destructive cursor-not-allowed"
-              : "bg-emerald-600 hover:bg-emerald-700 cursor-pointer ",
-            "absolute bottom-4 right-4 rounded-full w-14 h-14 transition-all duration-300text-white flex items-center justify-center text-white"
-          )}
-        >
-          {isLoading ? (
-            <Loader2 className="w-6 h-6 animate-spin" />
-          ) : (
-            <ArrowUp className="w-6 h-6" />
-          )}
-        </button>
-        {isLoading && (
+        <AppButton
+          onClick={() => onSave()}
+          isLoading={isSubmitLoading}
+          errorDisable={disableBtn}
+          className={"absolute bottom-4 right-4 rounded-full w-14 h-14 "}
+        />
+        {isSubmitLoading && (
           <div className="absolute top-4 right-4 z-20">
             <div className="flex items-center space-x-2 bg-emerald-50 px-3 py-2 rounded-full border border-emerald-200">
               <Loader2 className="w-4 h-4 text-emerald-600 animate-spin" />

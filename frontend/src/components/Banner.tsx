@@ -21,9 +21,8 @@ const Banner = () => {
               Medical Disclaimer
             </h3>
             <p className="text-sm text-amber-700 mt-1">
-              This is not a medical device. AI-generated content is for
-              informational purposes only and requires clinician review. Always
-              consult qualified healthcare professionals for medical decisions.
+              Draft only: clinician review required; not a medical device; may
+              be inaccurate.
             </p>
           </div>
         </div>

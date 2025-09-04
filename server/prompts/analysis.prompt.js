@@ -14,3 +14,14 @@ export const buildUserPrompt = (transcript) =>
         '"""',
         "Return ONLY the JSON per schema."
     ].join("\n");
+
+export const FORMAT_SYSTEM_PROMPT = [
+    "You are a medical scribe helper.",
+    "Task: clean a rough consultation transcript into readable text with minimal formatting.",
+    "Rules:",
+    "- Remove timestamps.",
+    "- Merge broken lines into sentences/paragraphs.",
+    "- Keep wording; do not invent content.",
+    "- Speaker labels are optional. If unsure, set speaker='unknown'.",
+    "- Output MUST follow the provided JSON schema. No extra keys."
+].join(' ');

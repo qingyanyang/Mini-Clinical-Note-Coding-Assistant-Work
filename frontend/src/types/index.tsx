@@ -3,6 +3,10 @@ export interface IAnalyzeRequest {
   ack?: boolean;
 }
 
+export interface IFormatRequest {
+  rawTranscriptText: string;
+}
+
 export type Confidence = "low" | "med" | "high";
 export type RiskLevel = "none" | "high";
 export type EMLevel = "99212" | "99213" | "99214" | "99215" | null;
@@ -73,9 +77,20 @@ export interface IParsedResponse {
   createdAt?: string;
 }
 
-export interface IApiFullResponse {
+export interface IFormattedResponse {
+  parsed: {
+    formatted: string;
+    turns: ISpeakerFormat[];
+  };
+}
+
+export interface ISpeakerFormat {
+  speaker: string;
+  text: string;
+}
+export interface IApiFullResponse<T> {
   status: number;
   data: {
-    parsedResponse: IParsedResponse;
+    parsedResponse: T;
   };
 }
