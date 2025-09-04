@@ -29,12 +29,12 @@ Stack: React + Vite + TypeScript (frontend), Express.js (server), OpenAI API (se
 
 see demo1.gif demo2.gif
 
-## Prepare
+# Prepare
 
 Node Version: v22.1.0
 OpenAI API key
 
-### Setup environment variables for local env
+## Setup environment variables for local env
 
 ```
 cp .env.example .env
@@ -42,7 +42,7 @@ cp .env.example .env
 
 Note you need to get [OPEN_AI_API_KEY](https://platform.openai.com/api-keys)
 
-## Commands
+# Commands
 
 | name                 | commands      |
 | -------------------- | ------------- |
