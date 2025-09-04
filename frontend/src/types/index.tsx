@@ -21,6 +21,7 @@ export interface ISOAP {
 export interface IProblem {
   name: string;
   rationale: string;
+  icd10: IICD;
 }
 
 export interface IICD {
@@ -39,7 +40,6 @@ export interface IAnalysis {
   schemaVersion: 1;
   documentation: ISOAP;
   problems: IProblem[];
-  icd10: IICD[];
   billing: {
     emLevel: EMLevel;
     cpt: ICPT[];
@@ -61,19 +61,6 @@ export interface IParsedResponse {
   };
   data: IAnalysis;
   claimsSoftened?: boolean;
-  trace?: {
-    prompt: {
-      system?: string;
-      user: string;
-    };
-    rawModelText?: string;
-    decisionLog: string[];
-    meta?: {
-      provider?: string;
-      model?: string;
-    };
-  };
-  sessionId?: string;
   createdAt?: string;
 }
 

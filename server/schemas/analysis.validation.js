@@ -28,15 +28,16 @@ export const SOAP = z.object({
     plan: z.string(),
 });
 
-export const Problem = z.object({
-    name: z.string(),
-    rationale: z.string(),
-});
-
 export const ICD = z.object({
     code: z.string(),
     description: z.string(),
     confidence: Confidence,
+});
+
+export const Problem = z.object({
+    name: z.string(),
+    rationale: z.string(),
+    icd10: ICD
 });
 
 export const CPT = z.object({
@@ -79,18 +80,5 @@ export const ApiFullResponse = z.object({
     }),
     data: AnalysisSchema,
     claimsSoftened: z.boolean(),
-    trace: z.object({
-        prompt: z.object({
-            system: z.string().optional(),
-            user: z.string(),
-        }),
-        rawModelText: z.string().optional(),
-        decisionLog: z.array(z.string()),
-        meta: z.object({
-            provider: z.string(),
-            model: z.string(),
-        }).partial()
-    }),
-    sessionId: z.string(),
     createdAt: z.string(),
 });

@@ -14,7 +14,7 @@ interface IResultsTabs {
 }
 const ResultsTabs: React.FC<IResultsTabs> = ({ analysisResults }) => {
   const {
-    data: { documentation, problems, icd10, billing },
+    data: { documentation, problems, billing },
   } = analysisResults;
   const { emLevel, cpt, hintSummary } = billing;
 
@@ -169,7 +169,10 @@ const ResultsTabs: React.FC<IResultsTabs> = ({ analysisResults }) => {
                     <div>
                       <p className="font-medium text-gray-900">{item.name}</p>
                       <p className="text-sm text-gray-600">
-                        {icd10.join(", ")}: {item.rationale}
+                        {item.icd10.code}: {item.icd10.confidence}{" "}
+                        {item.icd10.description}
+                        {"\n"}
+                        {item.rationale}
                       </p>
                     </div>
                   </div>
@@ -247,21 +250,12 @@ const ResultsTabs: React.FC<IResultsTabs> = ({ analysisResults }) => {
                   AI processing details and confidence metrics
                 </CardDescription>
               </div>
-              <Button
-                className="cursor-pointer"
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  copyToClipboard(
-                    JSON.stringify(analysisResults.trace, null, 2)
-                  )
-                }
-              >
+              <Button className="cursor-pointer" variant="outline" size="sm">
                 <Copy className="w-4 h-4 mr-2" />
                 Copy
               </Button>
             </CardHeader>
-            <CardContent className="space-y-4"></CardContent>
+            <CardContent className="space-y-4">it is coming</CardContent>
           </Card>
         </TabsContent>
       </Tabs>
