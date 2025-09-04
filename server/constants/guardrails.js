@@ -6,7 +6,16 @@ export const EMERGENCY_KEYWORDS = [
     'shortness of breath',
     'suicidal',
     'anaphylaxis',
-    'stroke'
+    'stroke',
+    "heart attack",
+    "unconscious",
+    "bleeding heavily",
+    "severe allergic reaction",
+    "suicide",
+    "overdose",
+    "severe abdominal pain",
+    "can't breathe",
+    "choking",
 ];
 
 export const SOFTEN_MAP = {

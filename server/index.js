@@ -1,7 +1,9 @@
 import config from "./config/app.js";
 import express from 'express';
 import helmet from 'helmet';
+import cors from 'cors';
 
+import formatResponseMiddleware from './middleware/formatResponse.middleware.js';
 import pathNotFoundMiddleware from './middleware/pathNotFound.middleware.js';
 import validationErrorMiddleware from './middleware/error/validationError.middleware.js';
 import notFoundErrorMiddleware from './middleware/error/notFoundError.middleware.js';
@@ -15,8 +17,10 @@ db.pragma('journal_mode = WAL');
 const app = express();
 
 app.use(helmet());
+app.use(cors());
 app.use(express.json());
 
+app.use(formatResponseMiddleware);
 app.use('/api/v1', v1Router);
 app.use(pathNotFoundMiddleware);
 app.use(validationErrorMiddleware);
