@@ -2,31 +2,42 @@ import clsx from "clsx";
 import { ArrowUp, Loader2 } from "lucide-react";
 import React from "react";
 
-export interface IButtonProps {
+export interface IButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   onClick: () => void;
   isLoading: boolean;
-  errorDisable: boolean;
+  disabled: boolean;
+  isError: boolean;
   className: string;
   buttonText?: string;
 }
 const AppButton: React.FC<IButtonProps> = ({
   onClick,
   isLoading,
-  errorDisable,
+  isError,
   className,
   buttonText,
+  disabled,
+  ...props
 }) => {
+  const base =
+    "flex items-center justify-center text-white transition-all duration-300";
+  const ready = "bg-emerald-600 hover:bg-emerald-700 cursor-pointer";
+  const loading = "bg-emerald-500 animate-pulse shadow-lg shadow-emerald-200";
+  const errored = "bg-red-700 hover:bg-red-400";
+  const notAllowed = "!cursor-not-allowed disabled:opacity-60";
   return (
     <button
+      {...props}
       onClick={onClick}
-      disabled={isLoading || errorDisable}
+      disabled={disabled}
+      aria-disabled={disabled}
+      aria-busy={isLoading}
       className={clsx(
-        isLoading
-          ? "bg-emerald-500 animate-pulse shadow-lg shadow-emerald-200"
-          : errorDisable
-          ? "bg-destructive cursor-not-allowed"
-          : "bg-emerald-600 hover:bg-emerald-700 cursor-pointer ",
-        "transition-all duration-300text-white flex items-center justify-center text-white",
+        base,
+        isLoading ? loading : ready,
+        isError && errored,
+        disabled && notAllowed,
         className
       )}
     >

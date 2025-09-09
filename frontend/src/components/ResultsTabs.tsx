@@ -57,7 +57,7 @@ const ResultsTabs: React.FC<IResultsTabs> = ({ analysisResults }) => {
       </div>
 
       <Tabs defaultValue="note" className="w-full">
-        <TabsList className="grid h-12 w-full grid-cols-4 bg-gray-100 p-1 rounded-lg">
+        <TabsList className="grid h-12 w-full grid-cols-3 bg-gray-100 p-1 rounded-lg">
           <TabsTrigger
             value="note"
             className="rounded-lg font-bold data-[state=active]:bg-white data-[state=active]:text-emerald-700"
@@ -75,12 +75,6 @@ const ResultsTabs: React.FC<IResultsTabs> = ({ analysisResults }) => {
             className="rounded-lg font-bold data-[state=active]:bg-white data-[state=active]:text-emerald-700"
           >
             Billing
-          </TabsTrigger>
-          <TabsTrigger
-            value="trace"
-            className="rounded-lg font-bold data-[state=active]:bg-white data-[state=active]:text-emerald-700"
-          >
-            Trace
           </TabsTrigger>
         </TabsList>
 
@@ -238,24 +232,6 @@ const ResultsTabs: React.FC<IResultsTabs> = ({ analysisResults }) => {
                 <p className="font-medium text-gray-900">{hintSummary}</p>
               </div>
             </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="trace" className="mt-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Analysis Trace</CardTitle>
-                <CardDescription>
-                  AI processing details and confidence metrics
-                </CardDescription>
-              </div>
-              <Button className="cursor-pointer" variant="outline" size="sm">
-                <Copy className="w-4 h-4 mr-2" />
-                Copy
-              </Button>
-            </CardHeader>
-            <CardContent className="space-y-4">it is coming</CardContent>
           </Card>
         </TabsContent>
       </Tabs>

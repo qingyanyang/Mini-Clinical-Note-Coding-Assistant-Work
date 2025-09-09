@@ -27,6 +27,11 @@ app.use(validationErrorMiddleware);
 app.use(notFoundErrorMiddleware);
 app.use(unknownErrorMiddleware);
 
-app.listen(config.PORT, () => {
+// health check
+app.get("/", (_, res) => {
+    res.status(200).send("Server running.");
+});
+
+app.listen(Number(config.PORT), '0.0.0.0', () => {
     console.info(`Server listening on port ${config.PORT}`)
 })

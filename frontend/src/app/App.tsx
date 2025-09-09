@@ -1,4 +1,3 @@
-// App.tsx
 import { useEffect, useState } from "react";
 import Banner from "../components/Banner";
 import HeaderAnimation from "../components/HeaderAnimation";
@@ -14,6 +13,9 @@ import { useFormatTranscript } from "@/hooks/useFormatTranscript";
 function App() {
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [ackChecked, setAckChecked] = useState<boolean>(false);
+  const [isSample1Loading, setIsSample1Loading] = useState<boolean>(false);
+  const [isSample2Loading, setIsSample2Loading] = useState<boolean>(false);
+  const [isPasteLoading, setIsPasteLoading] = useState<boolean>(false);
 
   const {
     handleSubmit,
@@ -26,18 +28,57 @@ function App() {
 
   const {
     formatTranscript,
-    loading: isFormatLoading,
     error: formatError,
     formatted,
   } = useFormatTranscript();
+
+  const onPaste = async () => {
+    setIsPasteLoading(true);
+    const text = await navigator.clipboard.readText();
+    if (text.trim()) {
+      await formatTranscript({ rawTranscriptText: text });
+    }
+    setIsPasteLoading(false);
+  };
+
+  const onClickSample = async (sampleNum: number) => {
+    if (sampleNum === 1) {
+      setIsSample1Loading(true);
+    } else {
+      setIsSample2Loading(true);
+    }
+    const res = await fetch(`/sampleTranscript0${sampleNum}.text`, {
+      cache: "no-cache",
+    });
+    if (!res.ok) setErrorMsg("Failed to load sample");
+    const text = await res.text();
+    await formatTranscript({ rawTranscriptText: text });
+    if (sampleNum === 1) {
+      setIsSample1Loading(false);
+    } else {
+      setIsSample2Loading(false);
+    }
+  };
 
   const resetAll = () => {
     setAckChecked(false);
     reset();
   };
 
+  const handleSave = async () => {
+    const lastCheckErrorMsg = getErrorMessage(formatted, {
+      label: "transcript",
+      required: true,
+      limit: MAX_LENGTH,
+    });
+    setErrorMsg(lastCheckErrorMsg);
+    if (!lastCheckErrorMsg) {
+      await handleSubmit({ transcriptText: formatted, ack: ackChecked });
+    }
+  };
+
   useEffect(() => {
-    if (formatted.trim() !== "") {
+    if (formatted) {
       resetAll();
       const instantErrorMsg = getErrorMessage(formatted, {
         label: "transcript",
@@ -47,14 +88,6 @@ function App() {
       setErrorMsg(instantErrorMsg);
     }
   }, [formatted]);
-
-  const onPaste = async () => {
-    const text = await navigator.clipboard.readText();
-    if (text.trim()) {
-      await formatTranscript({ rawTranscriptText: text });
-    }
-  };
-
   return (
     <div className=" min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 flex flex-col items-center">
       <div className="w-full max-w-6xl flex flex-col p-6 gap-10">
@@ -63,11 +96,13 @@ function App() {
         <Textarea
           disabled
           isSubmitLoading={isSubmitLoading}
-          isFormatLoading={isFormatLoading}
-          onSave={() =>
-            handleSubmit({ transcriptText: formatted, ack: ackChecked })
-          }
+          isFormatLoading={isPasteLoading}
+          isSample1Loading={isSample1Loading}
+          isSample2Loading={isSample2Loading}
+          onSave={handleSave}
           onPaste={onPaste}
+          onClickSample1={() => onClickSample(1)}
+          onClickSample2={() => onClickSample(2)}
           name={"transcript"}
           errorMsg={errorMsg || submitError || formatError}
           disableSubmit={requiredAck && !ackChecked}
