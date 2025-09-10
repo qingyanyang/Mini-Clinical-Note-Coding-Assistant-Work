@@ -27,7 +27,7 @@ Stack: React + Vite + TypeScript (frontend), Express.js (server), OpenAI API (se
 
 # Demo
 
-see demo1.gif demo2.gif
+[live demo](https://clinical-ai-assistant.chelseayang.work/)
 
 # Prepare
 
